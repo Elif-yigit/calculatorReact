@@ -1,33 +1,75 @@
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
 import './App.css'
 
 function App() {
-  const [count, setCount] = useState(0)
+  
+  const [todos,setTodos] = useState([]);
+  const [inputValue, setInputValue] = useState('');
+ 
+  function handleChange(e){
 
+    // console.log(e.target.value);
+    setInputValue(e.target.value);
+  }
+
+  function handleClick() {
+  // console.log(e.target.value);
+  setTodos([...todos,{
+    id:todos.length > 0 ? todos[todos.length-1].id +1 :1,
+    content:inputValue,
+    isCompleted:false
+  }]);
+  setInputValue('');
+
+  }
+
+  function handleCheckbox(e, todo) {
+
+  console.log(todo);
+
+  todo.isCompleted = !todo.isCompleted;
+  setTodos([...todos])
+   
+  }
+
+  function handleDelete (i) {
+
+    const todoNew = [...todos]
+    todoNew.splice(i,1)
+    setTodos(todoNew)
+  }
+  
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+     <div className='todo-container'>
+      <input type='text' value={inputValue} placeholder='Todo giriniz' onChange={handleChange}/>
+      <button disabled={inputValue.trim() == ""} onClick={handleClick} className='add-btn'>Ekle</button>
+     </div>
+    <ul>
+      
+        {todos.map((todo,i)=>(
+           <li key={todo.id}>
+            <label htmlFor={`todo-${todo.id}`}>
+            <input id={`todo-${todo.id}`} type='checkbox' onChange={(e) => handleCheckbox(e,todo) } />
+            
+            
+            </label>
+              <span className={`${todo.isCompleted ? "line-through" : ""}`}>{todo.content}</span>
+              <button onClick={() => handleDelete(i)}>Delete</button>
+          </li>
+        ))}
+    </ul>
+
+    {/* <div>
+      <ul>
+        {todos.map((todo, i) =>
+        <li key={i}>{todo.content}
+        
+        </li>
+        )}
+      </ul>
+    </div>
+       */}
     </>
   )
 }
